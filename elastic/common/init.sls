@@ -14,7 +14,7 @@ Install pip for elastic:
 
 Upgrade cryptography for elastic:
   pip.installed:
-    - name: {{ elastic.lookup.pip.cryptography }}
+    - name: {{ elastic.lookup.pip.cryptography }}<39
     - upgrade: true
     - reload_modules: True
 {%- endif %}
