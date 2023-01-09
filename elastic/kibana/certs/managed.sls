@@ -17,7 +17,7 @@ Kibana server certificate private key is managed:
     - mode: '0660'
     - user: root
     - group: {{ elastic.lookup.group.kibana }}
-{%- if salt["file.file_exists"](elastic.lookup.config.kibana | path_join("certs", "http.p12")) %}
+{%- if salt["file.file_exists"](elastic.lookup.config.kibana | path_join(elastic | traverse("kibana:config:server.ssl:certificate"))) %}
     - prereq:
       - Kibana server certificate is managed
 {%- endif %}
@@ -49,7 +49,7 @@ Kibana server certificate is managed:
     - append_certs: {{ elastic.certs.intermediate | json }}
     - require:
       - sls: {{ sls_package_install }}
-{%- if not salt["file.file_exists"](elastic.lookup.config.kibana | path_join("certs", "http.p12")) %}
+{%- if not salt["file.file_exists"](elastic.lookup.config.kibana | path_join(elastic | traverse("kibana:config:server.ssl:certificate"))) %}
       - Kibana server certificate private key is managed
 {%- endif %}
 
@@ -60,3 +60,19 @@ Ensure CA certificates are trusted for Kibana:
     - text: {{ ([elastic.certs.root] + elastic.certs.intermediate) | join("\n") | json }}
     - require:
       - sls: {{ sls_package_install }}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
