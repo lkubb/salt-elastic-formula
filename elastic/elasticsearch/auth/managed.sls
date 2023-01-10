@@ -123,8 +123,6 @@ Initialize Vault database configuration:
     - password: {{ vault_pw }}
     - require:
       - Create Vault user in Elasticsearch
-    - onfail:
-      - Check if bootstrap password was reset
 
 {%- if elastic.elasticsearch.auth.root_password or elastic.elasticsearch.auth.root_password_pillar or elastic.elasticsearch.auth.root_password_hash %}
 
