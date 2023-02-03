@@ -1,6 +1,6 @@
 {
   "template": "https://github.com/lkubb/salt-template-formula",
-  "commit": "5ad0aa5da5c005f26b247056aa8f156c3c2adfed",
+  "commit": "09d23d7be4069023a5dd2201c3db5b82049391a1",
   "checkout": null,
   "context": {
     "cookiecutter": {
@@ -101,7 +101,14 @@
             "root_password": null,
             "root_password_pillar": null,
             "root_password_hash": null,
-            "users_absent": ["kibana", "kibana_system", "logstash_system", "beats_system", "apm_system", "remote_monitoring_user"],
+            "users_absent": [
+              "kibana",
+              "kibana_system",
+              "logstash_system",
+              "beats_system",
+              "apm_system",
+              "remote_monitoring_user"
+            ],
             "vault_management_role": null
           },
           "config": {
@@ -133,11 +140,37 @@
             "es_host": null
           },
           "vault_roles": [
-            {"name": "kibana_system", "roles": ["kibana_system"]},
-            {"name": "logstash_system", "roles": ["logstash_system"]},
-            {"name": "beats_system", "roles": ["beats_system"]},
-            {"name": "apm_system", "roles": ["apm_system"]},
-            {"name": "remote_monitoring_user", "roles": ["remote_monitoring_collector", "remote_monitoring_agent"]}
+            {
+              "name": "kibana_system",
+              "roles": [
+                "kibana_system"
+              ]
+            },
+            {
+              "name": "logstash_system",
+              "roles": [
+                "logstash_system"
+              ]
+            },
+            {
+              "name": "beats_system",
+              "roles": [
+                "beats_system"
+              ]
+            },
+            {
+              "name": "apm_system",
+              "roles": [
+                "apm_system"
+              ]
+            },
+            {
+              "name": "remote_monitoring_user",
+              "roles": [
+                "remote_monitoring_collector",
+                "remote_monitoring_agent"
+              ]
+            }
           ]
         },
         "filebeat": {
@@ -155,7 +188,9 @@
             "elasticsearch_password": null
           },
           "config": {
-            "elasticsearch.hosts": ["http://localhost:9200"],
+            "elasticsearch.hosts": [
+              "http://localhost:9200"
+            ],
             "elasticsearch.ssl.certificateAuthorities": "/etc/kibana/certs/trust.pem",
             "logging": {
               "appenders": {
@@ -175,7 +210,9 @@
               "enabled": true,
               "key": "/etc/kibana/certs/http.key",
               "certificate": "/etc/kibana/certs/http.crt",
-              "supportedProtocols": ["TLSv1.3"]
+              "supportedProtocols": [
+                "TLSv1.3"
+              ]
             },
             "telemetry.optIn": false
           }
