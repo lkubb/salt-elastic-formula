@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-
 # vim: ft=sls
 
-{%- set tplroot = tpldir.split('/')[0] %}
-{%- set sls_package_install = tplroot ~ '.kibana.package.install' %}
+{%- set tplroot = tpldir.split("/")[0] %}
+{%- set sls_package_install = tplroot ~ ".kibana.package.install" %}
 {%- from tplroot ~ "/map.jinja" import mapdata as elastic with context %}
 
 include:
@@ -21,7 +20,7 @@ Kibana server certificate private key is managed:
     - prereq:
       - Kibana server certificate is managed
 {%- endif %}
-    - makedirs: True
+    - makedirs: true
     - require:
       - sls: {{ sls_package_install }}
 
@@ -44,7 +43,7 @@ Kibana server certificate is managed:
     - mode: '0660'
     - user: root
     - group: {{ elastic.lookup.group.kibana }}
-    - makedirs: True
+    - makedirs: true
     # include intermediate CA certificates, but not the root
     - append_certs: {{ elastic.certs.intermediate | json }}
     - require:

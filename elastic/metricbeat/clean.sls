@@ -1,5 +1,8 @@
-# -*- coding: utf-8 -*-
 # vim: ft=sls
+
+{#-
+    Stops, unconfigures and removes Metricbeat.
+#}
 
 include:
   - .service.clean

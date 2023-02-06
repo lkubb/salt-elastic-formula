@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-
 # vim: ft=sls
 
-{%- set tplroot = tpldir.split('/')[0] %}
-{%- set sls_service_running = tplroot ~ '.elasticsearch.certs.managed' %}
+{%- set tplroot = tpldir.split("/")[0] %}
+{%- set sls_service_running = tplroot ~ ".elasticsearch.certs.managed" %}
 {%- from tplroot ~ "/map.jinja" import mapdata as elastic with context %}
 {%- set vault_pw = salt["random.get_str"](punctuation=false) %}
 

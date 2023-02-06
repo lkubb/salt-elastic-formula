@@ -1,5 +1,11 @@
-# -*- coding: utf-8 -*-
 # vim: ft=sls
+
+{#-
+    *Meta-state*.
+
+    Removes everything Elastic-related:
+    includes all clean states.
+#}
 
 include:
   - .auditbeat.clean

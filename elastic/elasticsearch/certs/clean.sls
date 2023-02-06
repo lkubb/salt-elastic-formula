@@ -1,8 +1,13 @@
-# -*- coding: utf-8 -*-
 # vim: ft=sls
 
-{%- set tplroot = tpldir.split('/')[0] %}
-{%- set sls_service_clean = tplroot ~ '.elasticsearch.service.clean' %}
+{#-
+    Ensures certificates and keys are removed from ES configuration
+    and the local filesystem.
+    Depends on `elastic.elasticsearch.service.clean`_.
+#}
+
+{%- set tplroot = tpldir.split("/")[0] %}
+{%- set sls_service_clean = tplroot ~ ".elasticsearch.service.clean" %}
 {%- from tplroot ~ "/map.jinja" import mapdata as elastic with context %}
 
 include:
@@ -14,6 +19,8 @@ Elasticsearch certificates are absent:
       - {{ elastic.lookup.config.elasticsearch | path_join(elastic | traverse("elasticsearch:config:xpack.security.http.ssl:keystore.path")) }}
       - {{ elastic.lookup.config.elasticsearch | path_join(elastic | traverse("elasticsearch:config:xpack.security.http.transport:keystore.path")) }}
       - {{ elastic.lookup.config.elasticsearch | path_join(elastic | traverse("elasticsearch:config:xpack.security.http.transport:certificate_authorities")) }}
+    - require:
+      - sls: {{ sls_service_clean }}
 
 Ensure http pkcs12 password is absent from keystore:
   cmd.run:
@@ -21,6 +28,8 @@ Ensure http pkcs12 password is absent from keystore:
     - hide_output: true
     - onlyif:
       - {{ elastic.lookup.home.elasticsearch | path_join("bin", "elasticsearch-keystore") }} list | grep xpack.security.http.ssl.keystore.secure_password
+    - require:
+      - sls: {{ sls_service_clean }}
 
 Ensure transport pkcs12 password is absent from keystore:
   cmd.run:
@@ -28,3 +37,5 @@ Ensure transport pkcs12 password is absent from keystore:
     - hide_output: true
     - onlyif:
       - {{ elastic.lookup.home.elasticsearch | path_join("bin", "elasticsearch-keystore") }} list | grep xpack.security.transport.ssl.keystore.secure_password
+    - require:
+      - sls: {{ sls_service_clean }}

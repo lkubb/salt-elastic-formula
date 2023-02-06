@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # vim: ft=sls
 
 # This state creates valid certificates for Vault
@@ -8,13 +7,13 @@
 # in the Vault plugin for Elasticsearch, which requires local
 # file paths for certificates and keys.
 
-{%- set tplroot = tpldir.split('/')[0] %}
+{%- set tplroot = tpldir.split("/")[0] %}
 {%- from tplroot ~ "/map.jinja" import mapdata as elastic with context %}
 
 Vault Elasticsearch certificates dir exists:
   file.directory:
     - name: {{ elastic.lookup.vault_certs }}
-    - mode: 0755
+    - mode: '0755'
 
 Vault Elasticsearch client certificate private key is managed:
   x509.private_key_managed:
@@ -29,7 +28,7 @@ Vault Elasticsearch client certificate private key is managed:
     - mode: '0640'
     - user: root
     - group: vault
-    - makedirs: True
+    - makedirs: true
 
 Vault Elasticsearch client certificate is managed:
   x509.certificate_managed:
@@ -47,7 +46,7 @@ Vault Elasticsearch client certificate is managed:
     - mode: '0640'
     - user: root
     - group: vault
-    - makedirs: True
+    - makedirs: true
 {%- if not salt["file.file_exists"](elastic.lookup.vault_certs | path_join("vault_elasticsearch_key.pem")) %}
     - require:
       - Vault Elasticsearch client certificate private key is managed

@@ -1,5 +1,8 @@
-# -*- coding: utf-8 -*-
 # vim: ft=sls
+
+{#-
+    Undoes everything in the `elastic.kibana`_ state in reverse.
+#}
 
 include:
   - .service.clean

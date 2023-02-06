@@ -1,18 +1,28 @@
-# -*- coding: utf-8 -*-
 # vim: ft=sls
 
-{%- set tplroot = tpldir.split('/')[0] %}
-{%- set sls_package_install = tplroot ~ '.elasticsearch.package.install' %}
+{%- set tplroot = tpldir.split("/")[0] %}
+{%- set sls_package_install = tplroot ~ ".elasticsearch.package.install" %}
 {%- from tplroot ~ "/map.jinja" import mapdata as elastic with context %}
 
 {%- set transport_passphrase = "" %}
 {%- set http_passphrase = "" %}
 {%- if salt["file.file_exists"](elastic.lookup.home.elasticsearch | path_join("bin", "elasticsearch-keystore")) %}
-{%-   if salt["cmd.run"](elastic.lookup.home.elasticsearch | path_join("bin", "elasticsearch-keystore") ~ " list | grep xpack.security.transport.ssl.keystore.secure_password", python_shell=true) %}
-{%-     set transport_passphrase = salt["cmd.run_stdout"](elastic.lookup.home.elasticsearch | path_join("bin", "elasticsearch-keystore") ~ " show xpack.security.transport.ssl.keystore.secure_password") %}
+{%-   if salt["cmd.run"](
+        elastic.lookup.home.elasticsearch | path_join("bin", "elasticsearch-keystore") ~ " list |
+        grep xpack.security.transport.ssl.keystore.secure_password", python_shell=true
+      ) %}
+{%-     set transport_passphrase = salt["cmd.run_stdout"](
+          elastic.lookup.home.elasticsearch | path_join("bin", "elasticsearch-keystore")
+          ~ " show xpack.security.transport.ssl.keystore.secure_password"
+        ) %}
 {%-   endif %}
-{%-   if salt["cmd.run"](elastic.lookup.home.elasticsearch | path_join("bin", "elasticsearch-keystore") ~ " list | grep xpack.security.http.ssl.keystore.secure_password", python_shell=true) %}
-{%-     set http_passphrase = salt["cmd.run_stdout"](elastic.lookup.home.elasticsearch | path_join("bin", "elasticsearch-keystore") ~ " show xpack.security.http.ssl.keystore.secure_password") %}
+{%-   if salt["cmd.run"](
+        elastic.lookup.home.elasticsearch | path_join("bin", "elasticsearch-keystore") ~ " list |
+        grep xpack.security.http.ssl.keystore.secure_password", python_shell=true
+      ) %}
+{%-     set http_passphrase = salt["cmd.run_stdout"](
+          elastic.lookup.home.elasticsearch | path_join("bin", "elasticsearch-keystore") ~ " show xpack.security.http.ssl.keystore.secure_password"
+        ) %}
 {%-   endif %}
 {%- endif %}
 {%- if not transport_passphrase %}
@@ -37,7 +47,7 @@ Elasticsearch HTTP certificate private key is managed:
     - prereq:
       - Elasticsearch HTTP certificate is managed
 {%- endif %}
-    - makedirs: True
+    - makedirs: true
     - require:
       - sls: {{ sls_package_install }}
 
@@ -62,7 +72,7 @@ Elasticsearch HTTP certificate is managed:
     - mode: '0660'
     - user: root
     - group: {{ elastic.lookup.group.elasticsearch }}
-    - makedirs: True
+    - makedirs: true
     - pkcs12_passphrase: {{ http_passphrase }}
     # include intermediate CA certificates, but not the root
     - append_certs: {{ elastic.certs.intermediate | json }}
@@ -84,7 +94,7 @@ Elasticsearch transport certificate private key is managed:
     - prereq:
       - Elasticsearch transport certificate is managed
 {%- endif %}
-    - makedirs: True
+    - makedirs: true
     - require:
       - sls: {{ sls_package_install }}
 
@@ -108,7 +118,7 @@ Elasticsearch transport certificate is managed:
     - mode: '0660'
     - user: root
     - group: {{ elastic.lookup.group.elasticsearch }}
-    - makedirs: True
+    - makedirs: true
     - pkcs12_passphrase: {{ transport_passphrase }}
     # include intermediate CA certificates, but not the root
     - append_certs: {{ elastic.certs.intermediate | json }}
@@ -120,31 +130,40 @@ Elasticsearch transport certificate is managed:
 
 Ensure http pkcs12 password is present in keystore:
   cmd.run:
-    - name: echo $HTTP_PKCS12_PASSPHRASE | {{ elastic.lookup.home.elasticsearch | path_join("bin", "elasticsearch-keystore") }} add -f xpack.security.http.ssl.keystore.secure_password
+    - name: >-
+        echo $HTTP_PKCS12_PASSPHRASE |
+        {{ elastic.lookup.home.elasticsearch | path_join("bin", "elasticsearch-keystore") }} add -f xpack.security.http.ssl.keystore.secure_password
     - hide_output: true
     - env:
       - HTTP_PKCS12_PASSPHRASE: {{ http_passphrase }}
     - unless:
       - {{ elastic.lookup.home.elasticsearch | path_join("bin", "elasticsearch-keystore") }} list | grep xpack.security.http.ssl.keystore.secure_password
-      - test $({{ elastic.lookup.home.elasticsearch | path_join("bin", "elasticsearch-keystore") }} show xpack.security.http.ssl.keystore.secure_password) = '{{ http_passphrase }}'
+      - >-
+          test $({{ elastic.lookup.home.elasticsearch | path_join("bin", "elasticsearch-keystore") }}
+          show xpack.security.http.ssl.keystore.secure_password) = '{{ http_passphrase }}'
     - require:
       - sls: {{ sls_package_install }}
 
 Ensure transport pkcs12 password is present in keystore:
   cmd.run:
-    - name: echo $TRANSPORT_PKCS12_PASSPHRASE | {{ elastic.lookup.home.elasticsearch | path_join("bin", "elasticsearch-keystore") }} add -f xpack.security.transport.ssl.keystore.secure_password
+    - name: >-
+        echo $TRANSPORT_PKCS12_PASSPHRASE |
+        {{ elastic.lookup.home.elasticsearch | path_join("bin", "elasticsearch-keystore") }} add -f xpack.security.transport.ssl.keystore.secure_password
     - hide_output: true
     - env:
       - TRANSPORT_PKCS12_PASSPHRASE: {{ transport_passphrase }}
     - unless:
       - {{ elastic.lookup.home.elasticsearch | path_join("bin", "elasticsearch-keystore") }} list | grep xpack.security.transport.ssl.keystore.secure_password
-      - test $({{ elastic.lookup.home.elasticsearch | path_join("bin", "elasticsearch-keystore") }} show xpack.security.transport.ssl.keystore.secure_password) = '{{ transport_passphrase }}'
+      - >-
+          test $({{ elastic.lookup.home.elasticsearch | path_join("bin", "elasticsearch-keystore") }}
+          show xpack.security.transport.ssl.keystore.secure_password) = '{{ transport_passphrase }}'
     - require:
       - sls: {{ sls_package_install }}
 
 Ensure CA certificates are trusted:
   x509.pem_managed:
-    - name: {{ elastic.lookup.config.elasticsearch | path_join(elastic | traverse("elasticsearch:config:xpack.security.transport.ssl:certificate_authorities")) }}
+    - name: {{  elastic.lookup.config.elasticsearch |
+                path_join(elastic | traverse("elasticsearch:config:xpack.security.transport.ssl:certificate_authorities")) }}
     # ensure root and intermediate CA certs are in the truststore
     - text: {{ ([elastic.certs.root] + elastic.certs.intermediate) | join("\n") | json }}
     - require:

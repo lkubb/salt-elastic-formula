@@ -1,10 +1,9 @@
-# -*- coding: utf-8 -*-
 # vim: ft=sls
 
-{%- set tplroot = tpldir.split('/')[0] %}
-{%- set sls_auth_present = tplroot ~ '.kibana.auth.present' %}
-{%- set sls_certs_managed = tplroot ~ '.kibana.certs.managed' %}
-{%- set sls_config_file = tplroot ~ '.kibana.config.file' %}
+{%- set tplroot = tpldir.split("/")[0] %}
+{%- set sls_auth_present = tplroot ~ ".kibana.auth.present" %}
+{%- set sls_certs_managed = tplroot ~ ".kibana.certs.managed" %}
+{%- set sls_config_file = tplroot ~ ".kibana.config.file" %}
 {%- from tplroot ~ "/map.jinja" import mapdata as elastic with context %}
 
 include:
@@ -13,7 +12,7 @@ include:
 Kibana is running:
   service.running:
     - name: {{ elastic.lookup.service.kibana }}
-    - enable: True
+    - enable: true
     - watch:
       - sls: {{ sls_config_file }}
       - sls: {{ sls_auth_present }}

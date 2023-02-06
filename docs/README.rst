@@ -14,7 +14,7 @@ Elastic Formula
    :scale: 100%
    :target: https://github.com/pre-commit/pre-commit
 
-Manage Elastic with Salt.
+Manage an Elastic stack with Salt.
 
 .. contents:: **Table of Contents**
    :depth: 1
@@ -41,42 +41,532 @@ If you need (non-default) configuration, please refer to:
 
 Special notes
 -------------
-
+* This formula is written with a Vault database secret engine in mind. Note that the Vault integration currently requires my rewritten `Vault modules <https://github.com/lkubb/salt-vault-formula>`_, which might become available in Salt at some point.
+* The certificate management requires my rewritten `x509 modules <https://github.com/lkubb/salt-pca-formula>`_ (for ``pkcs12``), which will be available in Salt v3006.
+* ``pkcs12`` support in those modules requires ``cryptography`` v36, hence this formula includes the option to automatically upgrade it.
+* All of the ``*beat`` and ``logstash`` states are boilerplate at the moment.
+* The tests only serve an esthetical purpose currently (not implemented).
 
 Configuration
 -------------
 An example pillar is provided, please see `pillar.example`. Note that you do not need to specify everything by pillar. Often, it's much easier and less resource-heavy to use the ``parameters/<grain>/<value>.yaml`` files for non-sensitive settings. The underlying logic is explained in `map.jinja`.
 
+
 Available states
 ----------------
+
+The following states are found in this formula:
 
 .. contents::
    :local:
 
+
 ``elastic``
 ^^^^^^^^^^^
+Installs the Elastic repo and, if configured,
+upgrades Salt's ``cryptography`` module.
 
-*Meta-state (This is a state that includes other states)*.
+Does not install/configure/start any packages/services.
 
-This installs the elastic package,
 
-``elastic.package``
-^^^^^^^^^^^^^^^^^^^
+``elastic.auditbeat``
+^^^^^^^^^^^^^^^^^^^^^
+Installs, configures and starts Auditbeat.
 
-This state will install the elastic package only.
+
+``elastic.auditbeat.config``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+``elastic.auditbeat.package``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+``elastic.auditbeat.service``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+``elastic.common``
+^^^^^^^^^^^^^^^^^^
+Upgrades ``cryptography``, if configured.
+
+
+``elastic.elasticsearch``
+^^^^^^^^^^^^^^^^^^^^^^^^^
+*Meta-state*.
+Manages the lifecycle of an Elasticsearch node/cluster
+with integration to the Vault database secret engine.
+
+Includes all states for ES, with the exception of
+`elastic.elasticsearch.vault_setup`_.
+
+
+``elastic.elasticsearch.auth``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Takes care of managing ES users and groups and
+managing the Vault database secret engine connection.
+Also, optionally resets the bootstrap password.
+Depends on `elastic.elasticsearch.service`_.
+
+
+``elastic.elasticsearch.bootstrap_pass``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Ensures a known bootstrap password is set in order to
+be able to manage the initial configuration non-interactively.
+Depends on `elastic.elasticsearch.config`_.
+
+
+``elastic.elasticsearch.certs``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Generates and manages certificates + keys for the HTTP and transport layers,
+including trusted CA certificates for Elasticsearch.
+Note that generally, it's advisable to setup a CA minion. See the
+``x509`` (``x509_v2``) module docs for details.
+Depends on `elastic.elasticsearch.package`_.
+
+
+``elastic.elasticsearch.config``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Manages ES and JVM configuration.
+Depends on `elastic.elasticsearch.package`_.
+
+
+``elastic.elasticsearch.package``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Installs Elasticsearch only.
+Depends on `elastic.repo`_.
+
+
+``elastic.elasticsearch.service``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Enables and (re-)starts Elasticsearch.
+Depends on `elastic.elasticsearch.config`_, `elastic.elasticsearch.certs`_
+and `elastic.elasticsearch.bootstrap_pass`_
+
+
+``elastic.elasticsearch.vault_roles``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Manages Vault database secret engine roles.
+Depends on `elastic.elasticsearch.auth`_ (for managing
+the allowed roles on the connection).
+
+
+``elastic.elasticsearch.vault_setup``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+This should be targeted to your Vault minion(s), not the Elasticsearch one(s).
+Generates and manages ES client certificates for Vault since
+the ES database plugin currently does not allow to
+pass those in via the REST API.
+
+
+``elastic.filebeat``
+^^^^^^^^^^^^^^^^^^^^
+Installs, configures and starts Filebeat.
+
+
+``elastic.filebeat.config``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+``elastic.filebeat.package``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+``elastic.filebeat.service``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+``elastic.functionbeat``
+^^^^^^^^^^^^^^^^^^^^^^^^
+Installs, configures and starts Functionbeat.
+
+
+``elastic.functionbeat.config``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+``elastic.functionbeat.package``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+``elastic.functionbeat.service``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+``elastic.heartbeat``
+^^^^^^^^^^^^^^^^^^^^^
+Installs, configures and starts Heartbeat.
+
+
+``elastic.heartbeat.config``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+``elastic.heartbeat.package``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+``elastic.heartbeat.service``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+``elastic.kibana``
+^^^^^^^^^^^^^^^^^^
+Installs, configures and starts Kibana, including
+generating client certificates and requesting credentials
+from Vault.
+
+
+``elastic.kibana.auth``
+^^^^^^^^^^^^^^^^^^^^^^^
+Manages authentication details for Kibana.
+Note that this will always report changes since there is
+no way to read the current configuration.
+Depends on `elastic.kibana.package`_.
+
+
+``elastic.kibana.certs``
+^^^^^^^^^^^^^^^^^^^^^^^^
+Generates client certificates and ensures
+the CA is trusted by Kibana.
+Depends on `elastic.kibana.package`_.
+
+
+``elastic.kibana.config``
+^^^^^^^^^^^^^^^^^^^^^^^^^
+Manages Kibana configuration, other than authentication.
+Depends on `elastic.kibana.package`_.
+
+
+``elastic.kibana.package``
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+Installs the Kibana package only.
+Depends on `elastic.repo`_.
+
+
+``elastic.kibana.service``
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+Enables and (re-)starts Kibana.
+Depends on `elastic.kibana.config`_, `elastic.kibana.certs`_
+and `elastic.kibana.auth`_.
+
+
+``elastic.logstash``
+^^^^^^^^^^^^^^^^^^^^
+Installs, configures and starts Filebeat.
+
+
+``elastic.logstash.config``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+``elastic.logstash.package``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+``elastic.logstash.service``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+``elastic.metricbeat``
+^^^^^^^^^^^^^^^^^^^^^^
+Installs, configures and starts Metricbeat.
+
+
+``elastic.metricbeat.config``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+``elastic.metricbeat.package``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+``elastic.metricbeat.service``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+``elastic.packetbeat``
+^^^^^^^^^^^^^^^^^^^^^^
+Installs, configures and starts Packetbeat.
+
+
+``elastic.packetbeat.config``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+``elastic.packetbeat.package``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+``elastic.packetbeat.service``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+``elastic.repo``
+^^^^^^^^^^^^^^^^
+
+
 
 ``elastic.clean``
 ^^^^^^^^^^^^^^^^^
+*Meta-state*.
 
-*Meta-state (This is a state that includes other states)*.
+Removes everything Elastic-related:
+includes all clean states.
 
-This state will undo everything performed in the ``elastic`` meta-state in reverse order, i.e.
-then uninstalls the package.
 
-``elastic.package.clean``
-^^^^^^^^^^^^^^^^^^^^^^^^^
+``elastic.auditbeat.clean``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Stops, unconfigures and removes Auditbeat.
 
-This state will remove the elastic package.
+
+``elastic.auditbeat.config.clean``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+``elastic.auditbeat.package.clean``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+``elastic.auditbeat.service.clean``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+``elastic.elasticsearch.clean``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Undoes everything in the `elastic.elasticsearch`_ state in reverse.
+
+
+``elastic.elasticsearch.auth.clean``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Removes the Vault database connection, only if
+``remove_all_data_for_sure`` is true.
+Depends on `elastic.elasticsearch.service.clean`_.
+
+
+``elastic.elasticsearch.bootstrap_pass.clean``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Ensures no bootstrap password is set.
+Depends on `elastic.elasticsearch.service.clean`_.
+
+
+``elastic.elasticsearch.certs.clean``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Ensures certificates and keys are removed from ES configuration
+and the local filesystem.
+Depends on `elastic.elasticsearch.service.clean`_.
+
+
+``elastic.elasticsearch.config.clean``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Removes Elasticsearch and JVM configuration files.
+Depends on `elastic.elasticsearch.service.clean`_.
+
+
+``elastic.elasticsearch.package.clean``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Removes Elasticsearch.
+Depends on `elastic.elasticsearch.config.clean`_.
+
+
+``elastic.elasticsearch.service.clean``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Stops and disables Elasticsearch at boot time.
+
+
+``elastic.elasticsearch.vault_roles.clean``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Removes managed Vault roles.
+
+
+``elastic.elasticsearch.vault_setup.clean``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Removes generated certificate and key from the Vault server's filesystem.
+
+
+``elastic.filebeat.clean``
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+Stops, unconfigures and removes Filebeat.
+
+
+``elastic.filebeat.config.clean``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+``elastic.filebeat.package.clean``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+``elastic.filebeat.service.clean``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+``elastic.functionbeat.clean``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Stops, unconfigures and removes Functionbeat.
+
+
+``elastic.functionbeat.config.clean``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+``elastic.functionbeat.package.clean``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+``elastic.functionbeat.service.clean``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+``elastic.heartbeat.clean``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Stops, unconfigures and removes Heartbeat.
+
+
+``elastic.heartbeat.config.clean``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+``elastic.heartbeat.package.clean``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+``elastic.heartbeat.service.clean``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+``elastic.kibana.clean``
+^^^^^^^^^^^^^^^^^^^^^^^^
+Undoes everything in the `elastic.kibana`_ state in reverse.
+
+
+``elastic.kibana.auth.clean``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Removes authentication credentials from the Kibana keystore.
+Depends on `elastic.kibana.service.clean`_.
+
+
+``elastic.kibana.certs.clean``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Removes generated Kibana certificates and keys.
+Depends on `elastic.kibana.service.clean`_.
+
+
+``elastic.kibana.config.clean``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Removes Kibana the configuration file.
+Depends on `elastic.kibana.service.clean`_.
+
+
+``elastic.kibana.package.clean``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Removes Kibana from the system.
+Depends on `elastic.kibana.config.clean`_.
+
+
+``elastic.kibana.service.clean``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Stops and disables Kibana at boot time.
+
+
+``elastic.logstash.clean``
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+Stops, unconfigures and removes Logstash.
+
+
+``elastic.logstash.config.clean``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+``elastic.logstash.package.clean``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+``elastic.logstash.service.clean``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+``elastic.metricbeat.clean``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Stops, unconfigures and removes Metricbeat.
+
+
+``elastic.metricbeat.config.clean``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+``elastic.metricbeat.package.clean``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+``elastic.metricbeat.service.clean``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+``elastic.packetbeat.clean``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Stops, unconfigures and removes Packetbeat.
+
+
+``elastic.packetbeat.config.clean``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+``elastic.packetbeat.package.clean``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+``elastic.packetbeat.service.clean``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+``elastic.repo.clean``
+^^^^^^^^^^^^^^^^^^^^^^
+
+
+
 
 Contributing to this repo
 -------------------------

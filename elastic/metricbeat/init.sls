@@ -1,9 +1,13 @@
-# -*- coding: utf-8 -*-
 # vim: ft=sls
-{%- set tplroot = tpldir.split('/')[0] %}
+
+{#-
+    Installs, configures and starts Metricbeat.
+#}
+
+{%- set tplroot = tpldir.split("/")[0] %}
 
 include:
-  - {{ tplroot ~ '.common' }}
+  - {{ tplroot ~ ".common" }}
   - .package
   - .config
   - .service

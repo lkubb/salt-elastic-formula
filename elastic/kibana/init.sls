@@ -1,9 +1,15 @@
-# -*- coding: utf-8 -*-
 # vim: ft=sls
-{%- set tplroot = tpldir.split('/')[0] %}
+
+{#-
+    Installs, configures and starts Kibana, including
+    generating client certificates and requesting credentials
+    from Vault.
+#}
+
+{%- set tplroot = tpldir.split("/")[0] %}
 
 include:
-  - {{ tplroot ~ '.common' }}
+  - {{ tplroot ~ ".common" }}
   - .package
   - .config
   - .certs

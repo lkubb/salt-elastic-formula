@@ -1,10 +1,9 @@
-# -*- coding: utf-8 -*-
 # vim: ft=sls
 
-{%- set tplroot = tpldir.split('/')[0] %}
-{%- set sls_config_file = tplroot ~ '.elasticsearch.config.file' %}
-{%- set sls_certs_managed = tplroot ~ '.elasticsearch.certs.managed' %}
-{%- set sls_bootstrap_pass_managed = tplroot ~ '.elasticsearch.bootstrap_pass.managed' %}
+{%- set tplroot = tpldir.split("/")[0] %}
+{%- set sls_config_file = tplroot ~ ".elasticsearch.config.file" %}
+{%- set sls_certs_managed = tplroot ~ ".elasticsearch.certs.managed" %}
+{%- set sls_bootstrap_pass_managed = tplroot ~ ".elasticsearch.bootstrap_pass.managed" %}
 {%- from tplroot ~ "/map.jinja" import mapdata as elastic with context %}
 
 include:
@@ -15,7 +14,7 @@ include:
 Elasticsearch is running:
   service.running:
     - name: {{ elastic.lookup.service.elasticsearch }}
-    - enable: True
+    - enable: true
     - require:
       - sls: {{ sls_bootstrap_pass_managed }}
     - watch:

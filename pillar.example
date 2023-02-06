@@ -1,26 +1,47 @@
-# -*- coding: utf-8 -*-
 # vim: ft=yaml
 # yamllint disable rule:comments-indentation
 ---
 elastic:
-
+    # Auditbeat settings
   auditbeat:
     config: {}
+
+    # This formula generates certificates for all programs.
+    # Configure arguments to `x509.certificate_managed` here.
   certs:
+      # It is highly recommended to centrally manage the CA with a CA server.
     ca_server: null
+      # If your CA server signs certificates using an intermediate cert,
+      # specify its chain here.
     intermediate: []
+      # The root certificate is always required to instruct the components
+      # to trust the issuing CA.
     root: ''
     signing_cert: null
     signing_policy: null
     signing_private_key: null
     signing_private_key_passphrase: null
+
+    # Elasticsearch settings
   elasticsearch:
+      # Configure authentication-related settings for this formula
     auth:
+        # This bootstrap password will be set by this formula in order
+        # to manage users/roles.
       bootstrap_password: bo0t_57R4P
+        # List of roles that should be present in ES
       roles: []
+        # Reset the password of the `elastic` user account to this string
+        # after successful completion of the initial configuration
       root_password: null
+        # Same as above, but as a hash (see ES docs) rather than plaintext
       root_password_hash: null
+        # Same as root_password, but a value for ``salt["pillar.get"]`` to retrieve
+        # the actual password.
       root_password_pillar: null
+        # List of users that should be deleted.
+        # Since they are tied to corresponding roles, this formula
+        # deletes the default users by default and passes management to Vault.
       users_absent:
         - kibana
         - kibana_system
@@ -28,7 +49,12 @@ elastic:
         - beats_system
         - apm_system
         - remote_monitoring_user
+        # When the bootstrap password is reset, user/role management with this
+        # formula ceases to work. If you configured a management role on your
+        # Vault server, you can specify it here to use it instead.
+        # Note that this should be better left to Vault.
       vault_management_role: null
+      # Elasticsearch configuration, will be serialized as YAML
     config:
       cluster.initial_master_nodes: []
       cluster.name: elasticsearch
@@ -48,11 +74,20 @@ elastic:
         enabled: true
         keystore.path: certs/transport.p12
         verification_mode: certificate
+      # JVM configuration as a list of lines
     jvm_config: []
+      # Settings related to the Vault database secret engine
     vault:
+        # Name for the connection created/used by this formula
       connection_name: elasticsearch
+        # Name of the mount where the database secret engine is used
       database_mount: database
       es_host: null
+      # List of Vault roles that should be present and allowed
+      # for this connection. Note that there are two types,
+      # ones that reference ES roles, others that are completely defined
+      # on the Vault side.
+      # By default, this maps ES-inbuilt roles to Vault roles.
     vault_roles:
       - name: kibana_system
         roles:
@@ -70,16 +105,30 @@ elastic:
         roles:
           - remote_monitoring_collector
           - remote_monitoring_agent
+
+    # Filebeat settings
   filebeat:
+      # Will be serialized as YAML
     config: {}
+
+    # Functionbeat settings
   functionbeat:
+      # Will be serialized as YAML
     config: {}
+
+    # Heartbeat settings
   heartbeat:
+      # Will be serialized as YAML
     config: {}
+
+    # Kibana settings
   kibana:
+      # Authentication-related settings. If the password is unset,
+      # will try to receive credentials from the configured Vault mount.
     auth:
       elasticsearch_password: null
       elasticsearch_username: kibana_system
+      # Will be serialized as YAML
     config:
       elasticsearch.hosts:
         - http://localhost:9200
@@ -101,15 +150,34 @@ elastic:
         supportedProtocols:
           - TLSv1.3
       telemetry.optIn: false
+
+    # Logstash settings
   logstash:
+      # Will be serialized as YAML
     config: {}
+
+    # Metricbeat settings
   metricbeat:
+      # Will be serialized as YAML
     config: {}
+
+    # Packetbeat settings
   packetbeat:
+      # Will be serialized as YAML
     config: {}
+
+    # When applying clean states, do not try to prevent
+    # accidental data loss
   remove_all_data_for_sure: false
+    # Ensure `pyca/cryptography` is current
+    # (v36 is required for certificate management)
   upgrade_cryptography: true
+    # Lock all component versions to this specific one.
+    # While writing this, it might not make sense if multiple ones
+    # run on the same minion @FIXME
   version: null
+    # Lock all components to this major version.
+    # This ensures the corresponding release channel repository is configured.
   version_major: '8'
 
   lookup:

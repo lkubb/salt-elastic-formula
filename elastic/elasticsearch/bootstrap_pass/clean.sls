@@ -1,8 +1,12 @@
-# -*- coding: utf-8 -*-
 # vim: ft=sls
 
-{%- set tplroot = tpldir.split('/')[0] %}
-{%- set sls_service_clean = tplroot ~ '.elasticsearch.service.clean' %}
+{#-
+    Ensures no bootstrap password is set.
+    Depends on `elastic.elasticsearch.service.clean`_.
+#}
+
+{%- set tplroot = tpldir.split("/")[0] %}
+{%- set sls_service_clean = tplroot ~ ".elasticsearch.service.clean" %}
 {%- from tplroot ~ "/map.jinja" import mapdata as elastic with context %}
 
 include:

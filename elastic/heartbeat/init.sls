@@ -1,5 +1,9 @@
-# -*- coding: utf-8 -*-
 # vim: ft=sls
+
+{#-
+    Installs, configures and starts Heartbeat.
+#}
+
 {%- set tplroot = tpldir.split('/')[0] %}
 
 include:
