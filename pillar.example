@@ -255,6 +255,6 @@ elastic:
       # The entries under `source_files` are prepended to the default source files
       # given for the state
     source_files:
-      elastic-config-file-file-managed:
+      Elastic configuration is managed:
         - 'example_alt.tmpl'
         - 'example_alt.tmpl.jinja'

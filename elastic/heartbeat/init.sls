@@ -4,10 +4,10 @@
     Installs, configures and starts Heartbeat.
 #}
 
-{%- set tplroot = tpldir.split('/')[0] %}
+{%- set tplroot = tpldir.split("/")[0] %}
 
 include:
-  - {{ tplroot ~ '.common' }}
+  - {{ tplroot ~ ".common" }}
   - .package
   - .config
   - .service
