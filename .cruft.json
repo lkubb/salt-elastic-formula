@@ -89,6 +89,8 @@
           "ca_server": null,
           "intermediate": [],
           "root": "",
+          "days_remaining": null,
+          "days_valid": null,
           "signing_policy": null,
           "signing_private_key": null,
           "signing_cert": null,

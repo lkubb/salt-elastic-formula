@@ -60,6 +60,8 @@ elastic:
     config: {}
   certs:
     ca_server: null
+    days_remaining: null
+    days_valid: null
     intermediate: []
     root: ''
     signing_cert: null

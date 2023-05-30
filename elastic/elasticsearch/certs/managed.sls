@@ -61,6 +61,8 @@ Elasticsearch HTTP certificate is managed:
     - signing_private_key_passphrase: {{ elastic.certs.signing_private_key_passphrase or "null" }}
     - private_key: {{ elastic.lookup.config.elasticsearch | path_join("certs", "http.p12") }}
     - private_key_passphrase: {{ http_passphrase }}
+    - days_remaining: {{ elastic.certs.days_remaining }}
+    - days_valid: {{ elastic.certs.days_valid }}
     - encoding: pkcs12
     - authorityKeyIdentifier: keyid:always
     - basicConstraints: critical, CA:false
@@ -108,6 +110,8 @@ Elasticsearch transport certificate is managed:
     - signing_private_key_passphrase: {{ elastic.certs.signing_private_key_passphrase or "null" }}
     - private_key: {{ elastic.lookup.config.elasticsearch | path_join("certs", "transport.p12") }}
     - private_key_passphrase: {{ transport_passphrase }}
+    - days_remaining: {{ elastic.certs.days_remaining }}
+    - days_valid: {{ elastic.certs.days_valid }}
     - encoding: pkcs12
     - authorityKeyIdentifier: keyid:always
     - basicConstraints: critical, CA:false

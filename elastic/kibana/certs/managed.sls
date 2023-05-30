@@ -33,6 +33,8 @@ Kibana server certificate is managed:
     - signing_private_key: {{ elastic.certs.signing_private_key or "null" }}
     - signing_private_key_passphrase: {{ elastic.certs.signing_private_key_passphrase or "null" }}
     - private_key: {{ elastic.lookup.config.kibana | path_join(elastic | traverse("kibana:config:server.ssl:key")) }}
+    - days_remaining: {{ elastic.certs.days_remaining }}
+    - days_valid: {{ elastic.certs.days_valid }}
     - authorityKeyIdentifier: keyid:always
     - basicConstraints: critical, CA:false
     - subjectKeyIdentifier: hash
