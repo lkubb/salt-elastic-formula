@@ -15,6 +15,16 @@ upgrades Salt's ``cryptography`` module.
 Does not install/configure/start any packages/services.
 
 
+``elastic.common``
+^^^^^^^^^^^^^^^^^^
+Upgrades ``cryptography``, if configured.
+
+
+``elastic.repo``
+^^^^^^^^^^^^^^^^
+
+
+
 ``elastic.auditbeat``
 ^^^^^^^^^^^^^^^^^^^^^
 Installs, configures and starts Auditbeat.
@@ -33,11 +43,6 @@ Installs, configures and starts Auditbeat.
 ``elastic.auditbeat.service``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-
-
-``elastic.common``
-^^^^^^^^^^^^^^^^^^
-Upgrades ``cryptography``, if configured.
 
 
 ``elastic.elasticsearch``
@@ -269,17 +274,17 @@ Installs, configures and starts Packetbeat.
 
 
 
-``elastic.repo``
-^^^^^^^^^^^^^^^^
-
-
-
 ``elastic.clean``
 ^^^^^^^^^^^^^^^^^
 *Meta-state*.
 
 Removes everything Elastic-related:
 includes all clean states.
+
+
+``elastic.repo.clean``
+^^^^^^^^^^^^^^^^^^^^^^
+
 
 
 ``elastic.auditbeat.clean``
@@ -505,11 +510,6 @@ Stops, unconfigures and removes Packetbeat.
 
 ``elastic.packetbeat.service.clean``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-
-
-``elastic.repo.clean``
-^^^^^^^^^^^^^^^^^^^^^^
 
 
 
