@@ -3,14 +3,6 @@
 {%- set tplroot = tpldir.split("/")[0] %}
 {%- from tplroot ~ "/map.jinja" import mapdata as elastic with context %}
 
-{%- if grains["os"] in ["Debian", "Ubuntu"] %}
-
-Ensure Elastic APT repository can be managed:
-  pkg.installed:
-    - pkgs:
-      - python3-apt                   # required by Salt
-{%- endif %}
-
 {%- for reponame, enabled in elastic.lookup.enablerepo.items() %}
 {%-   if enabled %}
 
