@@ -169,9 +169,6 @@ elastic:
     # When applying clean states, do not try to prevent
     # accidental data loss
   remove_all_data_for_sure: false
-    # Ensure `pyca/cryptography` is current
-    # (v36 is required for certificate management)
-  upgrade_cryptography: true
     # Lock all component versions to this specific one.
     # While writing this, it might not make sense if multiple ones
     # run on the same minion @FIXME
@@ -205,9 +202,6 @@ elastic:
     home:
       elasticsearch: /usr/share/elasticsearch
       kibana: /usr/share/kibana
-    pip:
-      cryptography: cryptography
-      pkg: python3-pip
     pkg:
       auditbeat: auditbeat
       elasticsearch: elasticsearch

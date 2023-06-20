@@ -32,9 +32,6 @@ elastic:
     home:
       elasticsearch: /usr/share/elasticsearch
       kibana: /usr/share/kibana
-    pip:
-      cryptography: cryptography
-      pkg: python3-pip
     pkg:
       auditbeat: auditbeat
       elasticsearch: elasticsearch
@@ -162,7 +159,6 @@ elastic:
   packetbeat:
     config: {}
   remove_all_data_for_sure: false
-  upgrade_cryptography: true
   version: null
   version_major: '8'
 

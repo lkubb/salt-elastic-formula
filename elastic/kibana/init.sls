@@ -9,7 +9,6 @@
 {%- set tplroot = tpldir.split("/")[0] %}
 
 include:
-  - {{ tplroot ~ ".common" }}
   - .package
   - .config
   - .certs

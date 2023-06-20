@@ -13,7 +13,6 @@
 {%- from tplroot ~ "/map.jinja" import mapdata as elastic with context %}
 
 include:
-  - {{ tplroot ~ ".common" }}
   - .package
   - .config
   - .certs

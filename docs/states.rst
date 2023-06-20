@@ -9,15 +9,9 @@ The following states are found in this formula:
 
 ``elastic``
 ^^^^^^^^^^^
-Installs the Elastic repo and, if configured,
-upgrades Salt's ``cryptography`` module.
+Installs the Elastic repo.
 
 Does not install/configure/start any packages/services.
-
-
-``elastic.common``
-^^^^^^^^^^^^^^^^^^
-Upgrades ``cryptography``, if configured.
 
 
 ``elastic.repo``

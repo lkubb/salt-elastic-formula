@@ -75,10 +75,6 @@
           "packetbeat": "packetbeat"
         },
         "es_tools": "/usr/share/elasticsearch/bin",
-        "pip": {
-          "pkg": "python3-pip",
-          "cryptography": "cryptography"
-        },
         "vault_certs": "/opt/vault/tls"
       },
       "settings": {
@@ -229,7 +225,6 @@
           "config": {}
         },
         "remove_all_data_for_sure": false,
-        "upgrade_cryptography": true,
         "version_major": "8",
         "version": null
       },

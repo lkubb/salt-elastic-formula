@@ -42,8 +42,7 @@ If you need (non-default) configuration, please refer to:
 Special notes
 -------------
 * This formula is written with a Vault database secret engine in mind. Note that the Vault integration currently requires my rewritten `Vault modules <https://github.com/lkubb/salt-vault-formula>`_, which might become available in Salt at some point.
-* The certificate management requires my rewritten `x509 modules <https://github.com/lkubb/salt-pca-formula>`_ (for ``pkcs12``), which will be available in Salt v3006.
-* ``pkcs12`` support in those modules requires ``cryptography`` v36, hence this formula includes the option to automatically upgrade it.
+* The certificate management requires my rewritten `x509 modules <https://github.com/lkubb/salt-pca-formula>`_ (for ``pkcs12``), which are available from Salt v3006 onwards as ``x509_v2``.
 * All of the ``*beat`` and ``logstash`` states are boilerplate at the moment.
 * The tests only serve an esthetical purpose currently (not implemented).
 
@@ -63,15 +62,9 @@ The following states are found in this formula:
 
 ``elastic``
 ^^^^^^^^^^^
-Installs the Elastic repo and, if configured,
-upgrades Salt's ``cryptography`` module.
+Installs the Elastic repo.
 
 Does not install/configure/start any packages/services.
-
-
-``elastic.common``
-^^^^^^^^^^^^^^^^^^
-Upgrades ``cryptography``, if configured.
 
 
 ``elastic.repo``
