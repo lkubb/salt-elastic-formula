@@ -143,6 +143,8 @@ elastic:
       server.host: 0.0.0.0
       server.port: 5601
       server.ssl:
+        # Note that Kibana configuration paths are not relative to
+        # the configuration dir, you should specify these as absolute ones.
         certificate: /etc/kibana/certs/http.crt
         certificateAuthorities: /etc/kibana/certs/trust.pem
         enabled: true

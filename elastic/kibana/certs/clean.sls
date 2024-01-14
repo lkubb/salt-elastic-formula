@@ -15,9 +15,9 @@ include:
 Kibana certificates are absent:
   file.absent:
     - names:
-      - {{ elastic.lookup.config.kibana | path_join(elastic | traverse("kibana:config:server.ssl:key")) }}
-      - {{ elastic.lookup.config.kibana | path_join(elastic | traverse("kibana:config:server.ssl:certificate")) }}
-      - {{ elastic.lookup.config.kibana | path_join(elastic | traverse("kibana:config:server.ssl:certificateAuthorities")) }}
+      - {{ elastic | traverse("kibana:config:server.ssl:key") }}
+      - {{ elastic | traverse("kibana:config:server.ssl:certificate") }}
+      - {{ elastic | traverse("kibana:config:server.ssl:certificateAuthorities") }}
     - require:
       - sls: {{ sls_service_clean }}
 
