@@ -21,7 +21,7 @@ Elasticsearch is running:
       - sls: {{ sls_config_file }}
       - sls: {{ sls_certs_managed }}
 
-{%- if grains["os_family"] == "RedHat" %}
+{%- if elastic.manage_firewalld and "firewall-cmd" | which %}
 
 Elasticsearch service is known:
   firewalld.service:

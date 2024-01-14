@@ -224,6 +224,7 @@
         "packetbeat": {
           "config": {}
         },
+        "manage_firewalld": false,
         "remove_all_data_for_sure": false,
         "version_major": "8",
         "version": null

@@ -18,7 +18,7 @@ Kibana is running:
       - sls: {{ sls_auth_present }}
       - sls: {{ sls_certs_managed }}
 
-{%- if grains["os_family"] == "RedHat" %}
+{%- if elastic.manage_firewalld and "firewall-cmd" | which %}
 
 Kibana service is known:
   firewalld.service:

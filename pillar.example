@@ -168,6 +168,8 @@ elastic:
       # Will be serialized as YAML
     config: {}
 
+    # Open relevant ports using firewall-cmd. Defaults to false.
+  manage_firewalld: false
     # When applying clean states, do not try to prevent
     # accidental data loss
   remove_all_data_for_sure: false

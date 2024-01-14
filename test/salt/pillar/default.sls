@@ -154,6 +154,7 @@ elastic:
       telemetry.optIn: false
   logstash:
     config: {}
+  manage_firewalld: false
   metricbeat:
     config: {}
   packetbeat:
