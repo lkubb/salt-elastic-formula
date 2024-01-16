@@ -40,6 +40,8 @@ Vault Elasticsearch client certificate is managed:
     - signing_private_key_passphrase: {{ elastic.certs.signing_private_key_passphrase or "null" }}
     - private_key: {{ elastic.lookup.vault_certs | path_join("vault_elasticsearch_key.pem") }}
     - encoding: pem
+    - days_remaining: {{ elastic.certs.days_remaining | json }}
+    - days_valid: {{ elastic.certs.days_valid | json }}
     - authorityKeyIdentifier: keyid:always
     - basicConstraints: critical, CA:false
     - subjectKeyIdentifier: hash
