@@ -109,6 +109,10 @@
             ],
             "vault_management_role": null
           },
+          "certs": {
+            "cn": null,
+            "san": null
+          },
           "config": {
             "cluster.name": "elasticsearch",
             "cluster.initial_master_nodes": [],
@@ -184,6 +188,10 @@
           "auth": {
             "elasticsearch_username": "kibana_system",
             "elasticsearch_password": null
+          },
+          "certs": {
+            "cn": null,
+            "san": null
           },
           "config": {
             "elasticsearch.hosts": [

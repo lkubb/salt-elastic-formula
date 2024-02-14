@@ -67,10 +67,18 @@ Elasticsearch HTTP certificate is managed:
     - authorityKeyIdentifier: keyid:always
     - basicConstraints: critical, CA:false
     - subjectKeyIdentifier: hash
-    # required for vault
+{%-   if elastic.elasticsearch.certs.san %}
+    - subjectAltName: {{ elastic.elasticsearch.certs.san | json }}
+{%-   else %}
     - subjectAltName:
-      - dns: {{ elastic | traverse("elasticsearch:config:node.name", grains.id) }}
-    - CN: {{ elastic | traverse("elasticsearch:config:node.name", grains.id) }}
+      - dns: {{ elastic.elasticsearch.certs.cn or (elastic | traverse("elasticsearch:config:node.name")) or
+                ([grains.fqdn] + grains.fqdns) | reject("==", "localhost.localdomain") | first
+                | d(grains.id) }}
+      - ip: {{ (grains | traverse("ip4_interfaces:eth0", [""]) | first) or (grains.get("ipv4", []) | reject("==", "127.0.0.1") | first) }}
+{%-   endif %}
+    - CN: {{ elastic.elasticsearch.certs.cn or (elastic | traverse("elasticsearch:config:node.name")) or
+                ([grains.fqdn] + grains.fqdns) | reject("==", "localhost.localdomain") | first
+                | d(grains.id) }}
     - mode: '0660'
     - user: root
     - group: {{ elastic.lookup.group.elasticsearch }}
@@ -116,9 +124,18 @@ Elasticsearch transport certificate is managed:
     - authorityKeyIdentifier: keyid:always
     - basicConstraints: critical, CA:false
     - subjectKeyIdentifier: hash
+{%-   if elastic.elasticsearch.certs.san %}
+    - subjectAltName: {{ elastic.elasticsearch.certs.san | json }}
+{%-   else %}
     - subjectAltName:
-      - dns: {{ elastic | traverse("elasticsearch:config:node.name", grains.id) }}
-    - CN: {{ elastic | traverse("elasticsearch:config:node.name", grains.id) }}
+      - dns: {{ elastic.elasticsearch.certs.cn or (elastic | traverse("elasticsearch:config:node.name")) or
+                ([grains.fqdn] + grains.fqdns) | reject("==", "localhost.localdomain") | first
+                | d(grains.id) }}
+      - ip: {{ (grains | traverse("ip4_interfaces:eth0", [""]) | first) or (grains.get("ipv4", []) | reject("==", "127.0.0.1") | first) }}
+{%-   endif %}
+    - CN: {{ elastic.elasticsearch.certs.cn or (elastic | traverse("elasticsearch:config:node.name")) or
+                ([grains.fqdn] + grains.fqdns) | reject("==", "localhost.localdomain") | first
+                | d(grains.id) }}
     - mode: '0660'
     - user: root
     - group: {{ elastic.lookup.group.elasticsearch }}

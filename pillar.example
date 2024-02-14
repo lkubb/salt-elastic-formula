@@ -54,6 +54,10 @@ elastic:
         # Vault server, you can specify it here to use it instead.
         # Note that this should be better left to Vault.
       vault_management_role: null
+      # CN/SAN settings for Elasticsearch certs
+    certs:
+      cn: null
+      san: null
       # Elasticsearch configuration, will be serialized as YAML
     config:
       cluster.initial_master_nodes: []
@@ -128,6 +132,10 @@ elastic:
     auth:
       elasticsearch_password: null
       elasticsearch_username: kibana_system
+      # CN/SAN settings for Kibana certs
+    certs:
+      cn: null
+      san: null
       # Will be serialized as YAML
     config:
       elasticsearch.hosts:

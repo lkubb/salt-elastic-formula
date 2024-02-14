@@ -80,6 +80,9 @@ elastic:
         - apm_system
         - remote_monitoring_user
       vault_management_role: null
+    certs:
+      cn: null
+      san: null
     config:
       cluster.initial_master_nodes: []
       cluster.name: elasticsearch
@@ -131,6 +134,9 @@ elastic:
     auth:
       elasticsearch_password: null
       elasticsearch_username: kibana_system
+    certs:
+      cn: null
+      san: null
     config:
       elasticsearch.hosts:
         - http://localhost:9200
